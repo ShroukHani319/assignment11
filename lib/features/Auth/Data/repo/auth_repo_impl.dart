@@ -4,10 +4,9 @@ import '../../Domain/entity/user_entity.dart';
 import '../../Domain/repo/auth_repo.dart';
 import '../data_source/auth_remote_data_source.dart';
 
-
-@injectable
+@Injectable(as: AuthRepo)
 class AuthRepoImpl implements AuthRepo {
-  AuthRemoteDataSource authRemoteDataSource;
+  final AuthRemoteDataSource authRemoteDataSource;
 
   AuthRepoImpl(this.authRemoteDataSource);
 
@@ -20,6 +19,7 @@ class AuthRepoImpl implements AuthRepo {
       email: email,
       password: password,
     );
+
     return credential.toUserEntity();
   }
 
@@ -33,10 +33,11 @@ class AuthRepoImpl implements AuthRepo {
     required String email,
     required String password,
   }) async {
-    final credintials = await authRemoteDataSource.register(
+    final credentials = await authRemoteDataSource.register(
       email: email,
       password: password,
     );
-    return credintials.toUserEntity();
+
+    return credentials.toUserEntity();
   }
 }

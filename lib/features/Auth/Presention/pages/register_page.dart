@@ -28,11 +28,10 @@ class _RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-
     super.dispose();
   }
 
-  void register() {
+  void register(BuildContext context) {
     if (!formKey.currentState!.validate()) {
       return;
     }
@@ -46,9 +45,12 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GetIt.I<AuthCubit>(),
+      create: (_) => GetIt.I<AuthCubit>(),
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
+          // =========================
+          // SUCCESS
+          // =========================
           if (state is AuthSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -61,12 +63,15 @@ class _RegisterPageState extends State<RegisterPage> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => const LoginPage(),
+                builder: (_) => const LoginPage(),
               ),
                   (route) => false,
             );
           }
 
+          // =========================
+          // ERROR
+          // =========================
           if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -77,6 +82,10 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           }
         },
+
+        // =========================
+        // UI
+        // =========================
         builder: (context, state) {
           final isLoading = state is AuthLoading;
 
@@ -85,16 +94,19 @@ class _RegisterPageState extends State<RegisterPage> {
               title: const Text('Register'),
               centerTitle: true,
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: formKey,
-                child: SingleChildScrollView(
+
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 30),
 
+                      // =========================
+                      // ICON
+                      // =========================
                       const Icon(
                         Icons.person_add_alt_1,
                         size: 80,
@@ -103,6 +115,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 25),
 
+                      // =========================
+                      // TITLE
+                      // =========================
                       const Text(
                         'Create Account ✨',
                         style: TextStyle(
@@ -119,11 +134,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           fontSize: 16,
                           color: Colors.grey,
                         ),
+                        textAlign: TextAlign.center,
                       ),
 
                       const SizedBox(height: 35),
 
-                      // Email
+                      // =========================
+                      // EMAIL
+                      // =========================
                       TextFormField(
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -151,7 +169,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 20),
 
-                      // Password
+                      // =========================
+                      // PASSWORD
+                      // =========================
                       TextFormField(
                         controller: passwordController,
                         obscureText: obscurePassword,
@@ -177,11 +197,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           border: const OutlineInputBorder(),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null ||
+                              value.trim().isEmpty) {
                             return 'Please enter your password';
                           }
 
-                          if (value.length < 6) {
+                          if (value.trim().length < 6) {
                             return 'Password must be at least 6 characters';
                           }
 
@@ -191,7 +212,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 20),
 
-                      // Confirm Password
+                      // =========================
+                      // CONFIRM PASSWORD
+                      // =========================
                       TextFormField(
                         controller: confirmPasswordController,
                         obscureText: obscureConfirmPassword,
@@ -217,7 +240,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           border: const OutlineInputBorder(),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null ||
+                              value.trim().isEmpty) {
                             return 'Please confirm your password';
                           }
 
@@ -231,14 +255,24 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 30),
 
-                      // Register Button
+                      // =========================
+                      // REGISTER BUTTON
+                      // =========================
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: isLoading ? null : register,
+                          onPressed: isLoading
+                              ? null
+                              : () => register(context),
                           child: isLoading
-                              ? const CircularProgressIndicator()
+                              ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          )
                               : const Text(
                             'Register',
                             style: TextStyle(
@@ -250,9 +284,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 15),
 
-                      // Login
+                      // =========================
+                      // GO TO LOGIN
+                      // =========================
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment:
+                        MainAxisAlignment.center,
                         children: [
                           const Text(
                             'Already have an account?',
@@ -262,7 +299,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
+                                  builder: (_) =>
                                   const LoginPage(),
                                 ),
                               );

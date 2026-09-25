@@ -13,13 +13,12 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-final emailController = TextEditingController();
-final passwordController = TextEditingController();
-
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  void login() {
+  void login(BuildContext context) {
     if (!formKey.currentState!.validate()) {
       return;
     }
@@ -31,16 +30,23 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GetIt.I<AuthCubit>(),
+      create: (_) => GetIt.I<AuthCubit>(),
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => HomePage(),
+                builder: (_) => const HomePage(),
               ),
                   (route) => false,
             );
@@ -63,18 +69,24 @@ class _LoginPageState extends State<LoginPage> {
             appBar: AppBar(
               title: const Text('Login Page'),
               backgroundColor: const Color(0xFF0A0E21),
-              foregroundColor: const Color(0xFFFFFFFF),
+              foregroundColor: Colors.white,
             ),
             body: Center(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Form(
                   key: formKey,
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
+                      const SizedBox(height: 20),
+
+                      const Icon(
+                        Icons.lock_outline,
+                        size: 80,
+                        color: Color(0xFF0A0E21),
                       ),
+
+                      const SizedBox(height: 30),
 
                       // Email
                       TextFormField(
@@ -102,9 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
 
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
 
                       // Password
                       TextFormField(
@@ -125,33 +135,42 @@ class _LoginPageState extends State<LoginPage> {
                           }
 
                           if (value.trim().length < 6) {
-                            return 'Password must be at least 6 characters in length';
+                            return 'Password must be at least 6 characters';
                           }
 
                           return null;
                         },
                       ),
 
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 30),
 
                       // Login Button
-                      ElevatedButton(
-                        onPressed: isLoading ? null : login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff0A0E21),
-                          foregroundColor: Colors.white,
-                        ),
-                        child: isLoading
-                            ? const CircularProgressIndicator(
-                          color: Colors.white,
-                        )
-                            : const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Color(0xffffffff),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: isLoading
+                              ? null
+                              : () => login(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0A0E21),
+                            foregroundColor: Colors.white,
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                              : const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
