@@ -1,7 +1,11 @@
+import 'package:injectable/injectable.dart';
+
 import '../../Domain/entity/user_entity.dart';
 import '../../Domain/repo/auth_repo.dart';
 import '../data_source/auth_remote_data_source.dart';
 
+
+@injectable
 class AuthRepoImpl implements AuthRepo {
   AuthRemoteDataSource authRemoteDataSource;
 

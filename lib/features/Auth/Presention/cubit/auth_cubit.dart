@@ -1,9 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import '../../Domain/usecase/login_usecase.dart';
 import '../../Domain/usecase/logout_usecase.dart';
 import '../../Domain/usecase/register_usecase.dart';
 import 'auth_state.dart';
 
+
+@injectable
 class AuthCubit extends Cubit<AuthState> {
   LoginUseCase loginUseCase;
   RegisterUseCase registerUseCase;
