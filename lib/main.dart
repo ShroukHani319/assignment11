@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'features/Auth/Presention/pages/login_page.dart';
+import 'features/Auth/Presention/pages/register_page.dart';
+import 'features/Auth/core/di/di_container.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -11,9 +12,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-    const MyApp(),
-  );
+  configureDependencies();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
+      home:RegisterPage(),
     );
   }
 }
